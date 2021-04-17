@@ -63,7 +63,7 @@ function createManager() {
     
 }
 
-function createTeam(choice) {
+function createTeam() {
     inquirer.prompt([
         {
             type: 'list',
@@ -77,17 +77,20 @@ function createTeam(choice) {
     ])
     .then(choice => {
         console.log(choice.teamMember)
+        switch(choice.teamMember) {
+            case "Engineer":
+                addEngineer();
+                break;
+
+            case "Intern":
+                addIntern();
+                break;
+            case "I don't want to add anymore team members":
+                buildTeam();
+                break;
+            }
+
     });
-
-    if (choice === "Engieer") {
-        addEngineer()
-    } 
-    // switch statement
-        // case Engineer 
-            // addEngineer();
-
-        // case 'Build team':
-            // buildTeam()
 }
 
 function addEngineer() {
@@ -129,7 +132,41 @@ function addEngineer() {
 }
 
 function addIntern() {
-
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'internName',
+            message: "What is the intern's name?"
+        },
+        {
+            type: 'input',
+            name: 'internId',
+            message: "What is the intern's ID?"
+        },
+        {
+            type: 'input',
+            name: 'internEmail',
+            message: "What is the intern's email?",
+            validate: email => {
+                valid = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\.,;\s@\"]+\.{0,1})+([^<>()\.,;:\s@\"]{2,}|[\d\.]+))$/.test(email);
+                if (valid) {
+                    return true;
+                } else {
+                    console.log(".  Please enter a valid email")
+                    return false;
+                } 
+            }
+        },
+    ])
+    .then((answers) => {
+        const intern = new Employee(
+            answers.internName, 
+            answers.internId, 
+            answers.internEmail,
+            );
+        teamArr.push(intern);
+        createTeam()
+    })
 }
 
 function buildTeam() {
